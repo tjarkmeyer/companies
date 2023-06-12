@@ -18,6 +18,17 @@ You need a docker-network called
 
 > dev_network
 
-To create the "dev_network" simply run:
+To create the `dev_network` run:
 
-`docker network create dev_network`
+```bash
+docker network create dev_network
+```
+
+## Deploy to kubernetes
+Use kustomize to deploy:
+```bash
+kubectl create ns app
+kubectl create ns db
+kubectl apply -k ./k8s/postgres
+kubectl apply -k ./k8s/service
+```
