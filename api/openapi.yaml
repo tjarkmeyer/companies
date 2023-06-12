@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  description: Open API defintion for the companies service.
+  version: 1.0.0
+  title: Companies
+  contact:
+    email: hello@tjarkmeyer.com
+servers:
+  - url: /v1
+tags:
+- name: companies
+  description: Endpoints for companies.
+
+paths:
+  /company:
+    post:
+      tags:
+        - companies
+      summary: "Add a new company"
+      requestBody:
+        $ref: '#/components/requestBodies/CompanyRequestBody'
+      responses:
+        "201":
+          description: "Created"
+        "405":
+          description: "Invalid input"
+    put:
+      tags:
+        - companies
+      summary: "Update an existing company"
+      requestBody:
+        $ref: '#/components/requestBodies/CompanyRequestBody'
+      responses:
+        "201":
+          description: "Successfull operation"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Company not found"
+        "405":
+          description: "Validation exception"
+
+  /company/{companyId}:
+    get:
+      tags:
+        - companies
+      summary: "Find company by ID"
+      parameters:
+        - in: path
+          name: companyId
+          schema:
+            type: string
+          required: true
+          description: ID of the company
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Company not found"
+
+    delete:
+      tags:
+        - companies
+      summary: "Deletes a company"
+      parameters:
+        - in: path
+          name: companyId
+          schema:
+            type: string
+          required: true
+          description: ID of the company
+      responses:
+        "200":
+          description: "Successful operation"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Company not found"
+
+components:
+  requestBodies:
+    CompanyRequestBody:
+      description: The company request body
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Company'
+
+  schemas:
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+            postcode:
+              type: string
+            city:
+              type: string
+        industry:
+          $ref: "#/components/schemas/Industry"
+        createdAt:
+          type: number
+          description: "UNIX timestamp"
+        updatedAt:
+          type: number
+          description: "UNIX timestamp"
+    Industry:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        marketValue:
+          type: number
+        co2Footprint:
+          type: number
