@@ -37,14 +37,14 @@ func main() {
 		logger.Panic("Init tracing failed")
 	}
 
-	httpErrAdapater := http_adapter.New(http.StatusInternalServerError, http_adapter.AdaptNotFoundError, http_adapter.AdaptBadRequestError)
-	sqlErrAdapater := sql_adapter.New(repositories.ErrorsMap)
+	sqlErrAdapter := sql_adapter.New(repositories.ErrorsMap)
+	httpErrAdapter := http_adapter.New(http.StatusInternalServerError, http_adapter.AdaptNotFoundError, http_adapter.AdaptBadRequestError)
 
 	restController := rest.NewRestController()
 
-	companiesRepository := repositories.NewCompaniesRepository(db, sqlErrAdapater)
+	companiesRepository := repositories.NewCompaniesRepository(db, sqlErrAdapter)
 	companiesService := services.NewCompaniesService(companiesRepository, logger)
-	companiesHandler := controllers.NewCompaniesHandler(companiesService, logger, tracer, httpErrAdapater)
+	companiesHandler := controllers.NewCompaniesHandler(companiesService, logger, tracer, httpErrAdapter)
 	controllers.NewCompaniessAPIRouter(companiesHandler, restController)
 
 	apiController := restController.CreateRestControllerByName()

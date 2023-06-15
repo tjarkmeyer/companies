@@ -19,12 +19,15 @@ func AdaptNotFoundError(err error) (code int) {
 
 func AdaptBadRequestError(err error) (code int) {
 	switch err {
-	case repositories.ErrAlreadyExist,
-		errors.ErrInvalidCompanyName,
+	case errors.ErrInvalidCompanyName,
 		errors.ErrInvalidIndustryName,
 		errors.ErrInvalidCo2Footprint,
 		errors.ErrInvalidUUID:
 		return http.StatusBadRequest
+	case repositories.ErrAlreadyExist:
+		return http.StatusConflict
+	case repositories.ErrNotFound:
+		return http.StatusNotFound
 	default:
 		return code
 	}

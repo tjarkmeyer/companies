@@ -46,17 +46,17 @@ func NewCompaniessAPIRouter(h *CompaniesHandler, rd *rest.Definitions) {
 	r.Use(middleware.Recoverer)
 	r.Use(h.tracing.Handle)
 
-	r.With(MiddlewareRoleCheck).Post("/", h.create)
-	r.With(MiddlewareRoleCheck).Put("/", h.update)
-	r.Get("/{companyID}", h.getByID)
-	r.With(MiddlewareRoleCheck).Delete("/{companyID}", h.deleteByID)
+	r.With(MiddlewareRoleCheck).Post("/", h.Create)
+	r.With(MiddlewareRoleCheck).Put("/", h.Update)
+	r.Get("/{companyID}", h.GetByID)
+	r.With(MiddlewareRoleCheck).Delete("/{companyID}", h.DeleteByID)
 
 	controllerDefinition := &rest.Definition{Controller: r, Name: "companies"}
 
 	rd.AddController(controllerDefinition)
 }
 
-func (h *CompaniesHandler) create(w http.ResponseWriter, req *http.Request) {
+func (h *CompaniesHandler) Create(w http.ResponseWriter, req *http.Request) {
 	companyIn := &dtos.CompanyIn{}
 	if err := json.NewDecoder(req.Body).Decode(companyIn); err != nil {
 		h.log.Error("[ERROR] Decode http request body", zap.Error(err))
@@ -83,7 +83,7 @@ func (h *CompaniesHandler) create(w http.ResponseWriter, req *http.Request) {
 	h.encoder.EncodeSuccesful(w, http.StatusCreated)
 }
 
-func (h *CompaniesHandler) update(w http.ResponseWriter, req *http.Request) {
+func (h *CompaniesHandler) Update(w http.ResponseWriter, req *http.Request) {
 	companyIn := &dtos.CompanyIn{}
 	if err := json.NewDecoder(req.Body).Decode(companyIn); err != nil {
 		h.log.Error("[ERROR] Decode http request body", zap.Error(err))
@@ -110,7 +110,7 @@ func (h *CompaniesHandler) update(w http.ResponseWriter, req *http.Request) {
 	h.encoder.EncodeSuccesful(w, http.StatusOK)
 }
 
-func (h *CompaniesHandler) getByID(w http.ResponseWriter, req *http.Request) {
+func (h *CompaniesHandler) GetByID(w http.ResponseWriter, req *http.Request) {
 	companyID := chi.URLParam(req, "companyID")
 
 	h.log.Debug("[START] Get /companies/{companyID}", zap.String("companyID", companyID))
@@ -128,7 +128,7 @@ func (h *CompaniesHandler) getByID(w http.ResponseWriter, req *http.Request) {
 	h.encoder.EncodeJson(result, w, http.StatusOK)
 }
 
-func (h *CompaniesHandler) deleteByID(w http.ResponseWriter, req *http.Request) {
+func (h *CompaniesHandler) DeleteByID(w http.ResponseWriter, req *http.Request) {
 	companyID := chi.URLParam(req, "companyID")
 
 	h.log.Debug("[START] DELETE /companies/{companyID}", zap.String("companyID", companyID))

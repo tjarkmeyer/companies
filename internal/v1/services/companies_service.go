@@ -25,7 +25,7 @@ func NewCompaniesService(repository internal.ICompaniesRepository, log *zap.Logg
 // Create - creates a new company
 func (s *CompaniesService) Create(companyIn *dtos.CompanyIn) error {
 	company := &models.Company{}
-	if err := copier.Copy(company, &companyIn); err != nil {
+	if err := copier.Copy(company, companyIn); err != nil {
 		return err
 	}
 	return s.repository.Create(company)
@@ -34,7 +34,7 @@ func (s *CompaniesService) Create(companyIn *dtos.CompanyIn) error {
 // Update - updates a company
 func (s *CompaniesService) Update(companyIn *dtos.CompanyIn) error {
 	company := &models.Company{}
-	if err := copier.Copy(company, &companyIn); err != nil {
+	if err := copier.Copy(company, companyIn); err != nil {
 		return err
 	}
 	return s.repository.Update(company)

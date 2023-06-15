@@ -12,7 +12,7 @@ import (
 var (
 	expectedMap = map[error]int{
 		repositories.ErrNotFound:     http.StatusNotFound,
-		repositories.ErrAlreadyExist: http.StatusBadRequest,
+		repositories.ErrAlreadyExist: http.StatusConflict,
 	}
 )
 
