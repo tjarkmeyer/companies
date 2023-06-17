@@ -2,18 +2,18 @@ package repositories
 
 import (
 	"github.com/tjarkmeyer/companies/companies/internal/v1/models"
-	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/sql_adapter"
+	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/sqladapter"
 	"gorm.io/gorm"
 )
 
 // CompaniesRepository - defines companies repository
 type CompaniesRepository struct {
 	db           *gorm.DB
-	errorAdapter sql_adapter.IErrorAdapter
+	errorAdapter sqladapter.IErrorAdapter
 }
 
 // NewCompaniesRepository - creates new companies repository
-func NewCompaniesRepository(db *gorm.DB, errorAdapter sql_adapter.IErrorAdapter) *CompaniesRepository {
+func NewCompaniesRepository(db *gorm.DB, errorAdapter sqladapter.IErrorAdapter) *CompaniesRepository {
 	return &CompaniesRepository{
 		db:           db,
 		errorAdapter: errorAdapter,

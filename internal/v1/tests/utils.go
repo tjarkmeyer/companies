@@ -8,21 +8,21 @@ import (
 	"github.com/tjarkmeyer/companies/companies/internal/v1"
 	"github.com/tjarkmeyer/companies/companies/internal/v1/controllers"
 	"github.com/tjarkmeyer/companies/companies/internal/v1/services"
-	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/http_adapter"
-	logger "github.com/tjarkmeyer/golang-toolkit/logger/sentry"
+	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/httpadapter"
+	logger "github.com/tjarkmeyer/golang-toolkit/logger/v1"
 	"github.com/tjarkmeyer/golang-toolkit/servers/rest"
 )
 
 const jsonContentType = "application/json; charset=utf-8"
 
 func prepareServer(repositroy internal.ICompaniesRepository) *httptest.Server {
-	restController := rest.NewRestController()
-	logger := logger.InitLogger("testing", "")
-	adapter := http_adapter.New(http.StatusInternalServerError, http_adapter.AdaptNotFoundError, http_adapter.AdaptBadRequestError)
+	restController := rest.NewController()
+	logger := logger.New("testing", "")
+	adapter := httpadapter.New(http.StatusInternalServerError, httpadapter.AdaptBadRequestError)
 	service := services.NewCompaniesService(repositroy, logger)
 
 	handler := controllers.NewCompaniesHandler(service, logger, &sentryhttp.Handler{}, adapter)
-	controllers.NewCompaniessAPIRouter(handler, restController)
+	controllers.NewCompaniesAPIRouter(handler, restController)
 
-	return httptest.NewServer(restController.CreateRestControllerByName())
+	return httptest.NewServer(restController.CreateControllerByName())
 }

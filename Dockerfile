@@ -20,7 +20,7 @@ COPY internal ./internal
 COPY pkg ./pkg
 
 # build
-RUN go build -a -installsuffix cgo -o api ./cmd
+RUN go build -tags 'cgo_off' -a -o api ./cmd
 
 # runtime
 FROM alpine:3.16 AS runtime

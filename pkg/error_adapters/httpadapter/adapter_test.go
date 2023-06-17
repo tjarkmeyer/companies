@@ -1,4 +1,4 @@
-package http_adapter
+package httpadapter
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	expectedMap = map[error]int{
+	expected = map[error]int{
 		repositories.ErrNotFound:     http.StatusNotFound,
 		repositories.ErrAlreadyExist: http.StatusConflict,
 	}
@@ -18,9 +18,9 @@ var (
 
 func Test_Adapter(t *testing.T) {
 	defaultCode := http.StatusInternalServerError
-	adapter := New(defaultCode, AdaptNotFoundError, AdaptBadRequestError)
+	adapter := New(defaultCode, AdaptBadRequestError)
 
-	assert.Equal(t, expectedMap[repositories.ErrNotFound], adapter.AdaptToHttpCode(repositories.ErrNotFound))
-	assert.Equal(t, expectedMap[repositories.ErrAlreadyExist], adapter.AdaptToHttpCode(repositories.ErrAlreadyExist))
+	assert.Equal(t, expected[repositories.ErrNotFound], adapter.AdaptToHttpCode(repositories.ErrNotFound))
+	assert.Equal(t, expected[repositories.ErrAlreadyExist], adapter.AdaptToHttpCode(repositories.ErrAlreadyExist))
 	assert.Equal(t, defaultCode, adapter.AdaptToHttpCode(errors.New("")))
 }

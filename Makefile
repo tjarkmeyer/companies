@@ -25,7 +25,7 @@ dep: ## Get the dependencies
 	@go get -u golang.org/x/lint/golint
 
 build: dep ## Build the binary file
-	@go build -a -installsuffix cgo -o $(PROJECT_NAME) ./cmd
+	@go build -tags 'cgo_off' -a -o $(PROJECT_NAME) ./cmd
 
 run-dev: ## Run the project 
 	go run ./cmd/main.go

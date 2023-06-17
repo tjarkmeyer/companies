@@ -8,21 +8,21 @@ import (
 	"github.com/tjarkmeyer/companies/companies/internal/v1/models"
 	"github.com/tjarkmeyer/companies/companies/internal/v1/repositories"
 	"github.com/tjarkmeyer/companies/companies/internal/v1/services"
-	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/http_adapter"
-	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/sql_adapter"
+	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/httpadapter"
+	"github.com/tjarkmeyer/companies/companies/pkg/error_adapters/sqladapter"
 	"github.com/tjarkmeyer/golang-toolkit/database/v1"
-	logger "github.com/tjarkmeyer/golang-toolkit/logger/sentry"
-	tracing "github.com/tjarkmeyer/golang-toolkit/sentry-tracing"
+	logger "github.com/tjarkmeyer/golang-toolkit/logger/v1"
 	"github.com/tjarkmeyer/golang-toolkit/servers/rest"
+	tracing "github.com/tjarkmeyer/golang-toolkit/tracing"
 )
 
 func init() {
-	configs.LoadAppEnvConfig()
-	configs.LoadPostgresConfig()
+	configs.LoadAppEnv()
+	configs.LoadPostgres()
 }
 
 func main() {
-	logger := logger.InitLogger(configs.AppEnvConfig.Environment, configs.AppEnvConfig.SentryDSN)
+	logger := logger.New(configs.AppEnvConfig.Environment, configs.AppEnvConfig.SentryDSN)
 
 	db := database.Connect(configs.DataConnectionConfig, configs.DatabaseConfig)
 	err := models.Migration(db)
@@ -31,23 +31,23 @@ func main() {
 		logger.Panic("DB migration failed")
 	}
 
-	tracer, err := tracing.InitSentry(configs.AppEnvConfig.SentryDSN, configs.AppEnvConfig.Environment, configs.AppEnvConfig.AppName)
+	tracer, err := tracing.New(configs.AppEnvConfig.SentryDSN, configs.AppEnvConfig.Environment, configs.AppEnvConfig.AppName)
 	if err != nil {
 		logger.Info(err.Error())
 		logger.Panic("Init tracing failed")
 	}
 
-	sqlErrAdapter := sql_adapter.New(repositories.ErrorsMap)
-	httpErrAdapter := http_adapter.New(http.StatusInternalServerError, http_adapter.AdaptNotFoundError, http_adapter.AdaptBadRequestError)
+	sqlErrAdapter := sqladapter.New(repositories.ErrorsMap)
+	httpErrAdapter := httpadapter.New(http.StatusInternalServerError, httpadapter.AdaptBadRequestError)
 
-	restController := rest.NewRestController()
+	restController := rest.NewController()
 
 	companiesRepository := repositories.NewCompaniesRepository(db, sqlErrAdapter)
 	companiesService := services.NewCompaniesService(companiesRepository, logger)
 	companiesHandler := controllers.NewCompaniesHandler(companiesService, logger, tracer, httpErrAdapter)
-	controllers.NewCompaniessAPIRouter(companiesHandler, restController)
+	controllers.NewCompaniesAPIRouter(companiesHandler, restController)
 
-	apiController := restController.CreateRestControllerByName()
+	apiController := restController.CreateControllerByName()
 
 	logger.Info("Server started")
 

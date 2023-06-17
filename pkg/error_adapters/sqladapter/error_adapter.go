@@ -1,4 +1,4 @@
-package sql_adapter
+package sqladapter
 
 import (
 	"errors"

@@ -1,4 +1,4 @@
-package http_adapter
+package httpadapter
 
 import (
 	"net/http"
@@ -8,14 +8,6 @@ import (
 )
 
 type ErrorToHttpCodeAdapter func(err error) (code int)
-
-func AdaptNotFoundError(err error) (code int) {
-	if err == repositories.ErrNotFound {
-		return http.StatusNotFound
-	}
-
-	return code
-}
 
 func AdaptBadRequestError(err error) (code int) {
 	switch err {

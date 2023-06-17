@@ -6,15 +6,15 @@ import (
 )
 
 // DatabaseConfig - stores DB configuration
-var DatabaseConfig database.DBConfig
+var DatabaseConfig database.Config
 
 // DataConnectionConfig - stores DB connection configuration
-var DataConnectionConfig database.DataConnectionConf
+var DataConnectionConfig database.ConnectionConfig
 
-// LoadPostgresConfig - loads the postgres DB (form environment variables)
-func LoadPostgresConfig() {
-	var cDbConf database.DBConfig
-	var cData database.DataConnectionConf
+// LoadPostgres - loads the postgres DB (form environment variables)
+func LoadPostgres() {
+	var cDbConf database.Config
+	var cData database.ConnectionConfig
 
 	config.Process(&cDbConf)
 	config.Process(&cData)

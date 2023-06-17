@@ -14,8 +14,8 @@ type AppEnvironmentConfig struct {
 	SentryDSN   string `default:"" envconfig:"SENTRY_DSN"`
 }
 
-// LoadAppEnvConfig - loads the app configuration (form environment variables)
-func LoadAppEnvConfig() {
+// LoadAppEnv - loads the app configuration (form environment variables)
+func LoadAppEnv() {
 	var appEnvConfig AppEnvironmentConfig
 	config.Process(&appEnvConfig)
 	AppEnvConfig = appEnvConfig

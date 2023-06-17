@@ -1,4 +1,4 @@
-package http_adapter
+package httpadapter
 
 type IErrorAdapter interface {
 	AdaptToHttpCode(err error) (adapted int)
